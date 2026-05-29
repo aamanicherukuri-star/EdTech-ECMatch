@@ -1,0 +1,48 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'onboardingCompleted']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.onboardingCompleted is bool;
+    }
+
+    function isValidUserOpportunity(data) {
+      return data.keys().hasAll(['id', 'title', 'status']) &&
+             data.id is string &&
+             data.title is string &&
+             data.status in ['Saved', 'In Progress', 'Applied', 'Completed'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data);
+
+      match /opportunities/{oppId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidUserOpportunity(request.resource.data);
+        allow update: if isOwner(userId) && isValidUserOpportunity(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

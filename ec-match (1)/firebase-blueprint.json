@@ -1,0 +1,72 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores student academic and personal data.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "academicBaseline": {
+          "type": "object",
+          "properties": {
+            "gpa": { "type": "string" },
+            "gradingScale": { "type": "string" },
+            "rigorousCourses": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "activePortfolio": {
+          "type": "object",
+          "properties": {
+            "pastECs": { "type": "array", "items": { "type": "string" } },
+            "competitions": { "type": "array", "items": { "type": "string" } },
+            "experiences": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "holisticIdentity": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "intellectualDiet": {
+              "type": "object",
+              "properties": {
+                "books": { "type": "array", "items": { "type": "string" } },
+                "movies": { "type": "array", "items": { "type": "string" } },
+                "podcasts": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "personalOutlets": { "type": "string" }
+          }
+        },
+        "onboardingCompleted": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "onboardingCompleted"]
+    },
+    "UserOpportunity": {
+      "title": "User Opportunity",
+      "description": "An opportunity saved by a user with its status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "type": "string", "enum": ["Saved", "In Progress", "Applied", "Completed"] },
+        "savedAt": { "type": "string", "format": "date-time" },
+        "hoursLogged": { "type": "number" },
+        "impactSummary": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data."
+    },
+    "/users/{userId}/opportunities/{oppId}": {
+      "schema": "UserOpportunity",
+      "description": "Opportunities saved by the user."
+    }
+  }
+}
