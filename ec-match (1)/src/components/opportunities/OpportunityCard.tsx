@@ -148,7 +148,7 @@ export function OpportunityCard({ opportunity, isFeatured }: OpportunityCardProp
           </div>
         </CardContent>
 
-        <CardFooter className="p-6 pt-0 flex gap-3">
+        <CardFooter className="p-6 pt-0 flex gap-3 border-t-0 bg-transparent">
           <Button 
             onClick={handleSave}
             disabled={saving || saved}
