@@ -12,8 +12,8 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: #1e3a8a;
+  --color-primary-foreground: #ffffff;
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -38,7 +38,7 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #0f172a;
+  --primary: #1e3a8a;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -83,4 +83,212 @@
 
 .glass-card {
   @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-white/20 dark:border-slate-800/20 shadow-sm;
+}
+
+/* Landing Page Animations - Optimized for Performance */
+@keyframes float1 {
+  0%, 100% { transform: translateY(0px); will-change: transform; }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translateY(0px); will-change: transform; }
+  50% { transform: translateY(20px); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); will-change: transform; }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+.animate-float-1 {
+  animation: float1 5s ease-in-out infinite;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.animate-float-2 {
+  animation: float2 6s ease-in-out infinite;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.animate-float-3 {
+  animation: float3 7s ease-in-out infinite;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  animation: none;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+.fade-up.visible {
+  animation: fadeInUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fade-up.stagger-1 { animation-delay: 0s; }
+.fade-up.stagger-2 { animation-delay: 0.08s; }
+.fade-up.stagger-3 { animation-delay: 0.16s; }
+.fade-up.stagger-4 { animation-delay: 0.24s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.pricing-bg-shape {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.14;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+.pricing-bg-shape.bg-primary {
+  left: -80px;
+  top: 30px;
+  background: radial-gradient(circle at 40% 40%, rgba(30, 58, 138, 0.35), transparent 55%);
+}
+
+.pricing-bg-shape-secondary {
+  right: -120px;
+  bottom: 0;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at 30% 30%, rgba(251, 146, 60, 0.22), transparent 58%);
+}
+
+.pricing-card {
+  will-change: transform, box-shadow;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.pricing-card-swipe {
+  will-change: transform, box-shadow, filter;
+}
+
+.pricing-card-featured {
+  border-width: 1px;
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%);
+}
+
+.pricing-card:hover {
+  transform: translate3d(0, -8px, 0) rotate(1deg);
+  box-shadow: 0 34px 50px rgba(15, 23, 42, 0.15);
+}
+
+.pricing-card-featured:hover {
+  transform: translate3d(0, -8px, 0) rotate(1deg);
+  box-shadow: 0 40px 60px rgba(15, 23, 42, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-card,
+  .pricing-card-featured,
+  .pricing-card-swipe {
+    transition: none !important;
+  }
+}
+
+.pricing-card-featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 40%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.faq-answer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+details[open] .faq-answer {
+  max-height: 420px;
+  opacity: 1;
+}
+
+.faq-icon {
+  transition: transform 0.3s ease;
+}
+
+details[open] .faq-icon {
+  transform: rotate(180deg);
+}
+
+.dot-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+  background-size: 120px 120px;
+  background-position: 0 0;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 1;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+  backface-visibility: hidden;
+}
+
+.bg-orb.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(15, 23, 42, 0.3), transparent);
+  top: -250px;
+  right: -150px;
+}
+
+.bg-orb.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2), transparent);
+  bottom: -250px;
+  left: -150px;
+}
+
+.animate-pulse-subtle {
+  animation: pulseSoft 2.5s ease-in-out infinite;
+}
+
+html {
+  scroll-behavior: smooth;
 }

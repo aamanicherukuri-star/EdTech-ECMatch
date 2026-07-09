@@ -31,6 +31,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile } from './types';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import LandingPage from './components/LandingPage';
 
 type View = 'onboarding' | 'feed' | 'dashboard' | 'personalize' | 'settings' | 'profile';
 
@@ -43,6 +44,7 @@ export default function App() {
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPersonalizePopup, setShowPersonalizePopup] = useState(false);
+  const [pendingStartTrial, setPendingStartTrial] = useState(false);
 
   useEffect(() => {
     // Dark mode initialization
@@ -71,14 +73,24 @@ export default function App() {
               document.documentElement.style.setProperty('--primary', profileData.themeColor);
             }
 
-            if (profileData.onboardingCompleted) {
+            // If user clicked "Start Free Trial" on the landing page, take them to the dashboard.
+            if (pendingStartTrial) {
+              navigateTo('dashboard');
+              setPendingStartTrial(false);
+            } else if (profileData.onboardingCompleted) {
               navigateTo('feed');
             } else {
               navigateTo('onboarding');
             }
           } else {
-            setOnboardingCompleted(false);
-            navigateTo('onboarding');
+            // New user - go to onboarding unless they came from Start Free Trial
+            if (pendingStartTrial) {
+              navigateTo('dashboard');
+              setPendingStartTrial(false);
+            } else {
+              setOnboardingCompleted(false);
+              navigateTo('onboarding');
+            }
           }
         } catch (error) {
           console.error("Error fetching profile:", error);
@@ -174,24 +186,13 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-background p-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full text-center space-y-8"
-        >
-          <div className="space-y-2">
-            <h1 className="text-4xl font-serif font-medium tracking-tight text-foreground">EC Match</h1>
-            <p className="text-muted-foreground font-sans">Premium advisory for your extracurricular journey.</p>
-          </div>
-          <Button 
-            onClick={signInWithGoogle}
-            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full transition-all"
-          >
-            Get Started with Google
-          </Button>
-        </motion.div>
-      </div>
+      <LandingPage
+        onStartTrial={() => {
+          setPendingStartTrial(true);
+          signInWithGoogle();
+        }}
+        onSignIn={() => signInWithGoogle()}
+      />
     );
   }
 
