@@ -1,10 +1,9 @@
 {
-  "projectId": "ec-match",
-  "appId": "1:294005246058:web:21ea925c762cb2a5556213",
-  "apiKey": "AIzaSyAeL1MOmME0XnsoLtGdDzDj_-mHzBdtM-I",
-  "authDomain": "ec-match.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-dc1eb110-bdd9-4694-9d7f-2d8f8fcbaa31",
-  "storageBucket": "ec-match.firebasestorage.app",
-  "messagingSenderId": "294005246058",
-  "measurementId": "G-VCK9HZZV34"
+  "apiKey": "process.env.NEXT_PUBLIC_FIREBASE_API_KEY",
+  "authDomain": "process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+  "projectId": "process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+  "storageBucket": "process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+  "messagingSenderId": "process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+  "appId": "process.env.NEXT_PUBLIC_FIREBASE_APP_ID",
+  "measurementId": "process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"
 }

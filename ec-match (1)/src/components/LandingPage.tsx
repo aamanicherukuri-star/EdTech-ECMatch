@@ -69,12 +69,33 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
 
+    // --- Developer Password Gate States ---
+    const [showDevPasswordPrompt, setShowDevPasswordPrompt] = useState(false);
+    const [devPasswordInput, setDevPasswordInput] = useState('');
+
     const navigateToDashboard = () => {
         if (onStartTrial) {
             onStartTrial();
             return;
         }
         window.location.href = '/dashboard';
+    };
+
+    // --- Handles Dev Password Validation ---
+    const handleDevPasswordSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        // Change "your_passcode" to whatever secure password you want to use!
+        if (devPasswordInput === "ECMatchDevs2026") {
+            setShowDevPasswordPrompt(false);
+            setDevPasswordInput('');
+            if (onSignIn) {
+                onSignIn(); // Triggers your actual Google / Auth login
+            } else {
+                window.location.href = '/dashboard';
+            }
+        } else {
+            alert("Incorrect Developer Passcode!");
+        }
     };
   
   useEffect(() => {
@@ -124,7 +145,6 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
   return (
     <div className="font-sans antialiased relative bg-[#fdfcfb] text-[#0f172a] overflow-x-hidden min-h-screen">
       
-
     <div className="dot-pattern" id="bg-pattern"></div>
     <div className="bg-orb orb-1"></div>
     <div className="bg-orb orb-2"></div>
@@ -182,13 +202,10 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
                     </div>
                 </div>
 
-                {/* Right Bar: Auth Actions */}
-                <div className="bg-white/90 border border-slate-200 shadow-sm rounded-full h-16 px-6 hidden lg:flex items-center justify-center gap-6 w-fit absolute right-4 sm:right-8 lg:right-12">
-                    <button onClick={() => { if (onSignIn) { onSignIn(); } else { window.location.href = '/dashboard'; } }} className="text-sm font-semibold tracking-wide text-primary hover:text-primary/80 uppercase transition-colors px-2">
-                        Log In
-                    </button>
-                    <button onClick={navigateToDashboard} className="rounded-full bg-primary text-white hover:bg-primary/90 px-6 h-10 uppercase text-xs font-bold tracking-wider shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition duration-200 ease-out transform">
-                        Start Free Trial <span className="ml-2">→</span>
+                {/* Right Bar: Auth Actions (Triggers developer password validation modal) */}
+                <div className="bg-white/90 border border-slate-200 shadow-sm rounded-full h-16 px-6 hidden lg:flex items-center justify-center w-fit absolute right-4 sm:right-8 lg:right-12">
+                    <button onClick={() => setShowDevPasswordPrompt(true)} className="rounded-full bg-primary text-white hover:bg-primary/90 px-6 h-10 uppercase text-xs font-bold tracking-wider shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition duration-200 ease-out transform">
+                        Dev Login
                     </button>
                 </div>
             </header>
@@ -257,17 +274,17 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
                     </div>
                     {/* END EDIT COUNTDOWN HERE */}
                     
-                                        <form className="flex flex-col sm:flex-row gap-3 relative z-10" onSubmit={handleWaitlistSubmit}>
-                                            <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder="Enter your email address" className="flex-1 w-full px-5 h-12 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm transition duration-200 ease-out font-medium bg-white/90" required/>
+                    <form className="flex flex-col sm:flex-row gap-3 relative z-10" onSubmit={handleWaitlistSubmit}>
+                        <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder="Enter your email address" className="flex-1 w-full px-5 h-12 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm transition duration-200 ease-out font-medium bg-white/90" required/>
                         <button disabled={status === 'submitting'} type="submit" className="w-full sm:w-auto sm:px-8 h-12 rounded-xl bg-primary text-white font-bold uppercase text-xs tracking-wider hover:bg-primary/90 transition duration-200 ease-out shadow-md shadow-primary/20 hover:-translate-y-0.5 whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-60">
                             Secure My Spot
                         </button>
                     </form>
-                                        {message ? (
-                                            <p className={`mt-4 text-sm font-medium ${status === 'success' ? 'text-emerald-700' : status === 'error' ? 'text-rose-600' : 'text-slate-600'}`}>
-                                                {message}
-                                            </p>
-                                        ) : null}
+                    {message ? (
+                        <p className={`mt-4 text-sm font-medium ${status === 'success' ? 'text-emerald-700' : status === 'error' ? 'text-rose-600' : 'text-slate-600'}`}>
+                            {message}
+                        </p>
+                    ) : null}
                 </div>
 
                 {/* Social Proof */}
@@ -327,19 +344,15 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                     </div>
-                    {/* EDIT TESTIMONIAL TEXT HERE */}
                     <p className="text-slate-700 text-lg leading-relaxed flex-1 mb-8 relative z-10">
                         "This platform completely changed my trajectory. The custom study schedules helped me land my dream internship."
                     </p>
-                    {/* END EDIT TESTIMONIAL TEXT HERE */}
                     <div className="flex items-center gap-4 mt-auto relative z-10">
                         <div className="w-12 h-12 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-slate-400">
                             <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
                         </div>
                         <div>
-                            {/* EDIT NAME HERE */}
                             <div className="font-bold text-primary">Y.Y.</div>
-                            {/* END EDIT NAME HERE */}
                             <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">University '28</div>
                         </div>
                     </div>
@@ -357,149 +370,60 @@ export default function LandingPage({ onStartTrial, onSignIn }: Props = {}) {
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                     </div>
-                    {/* EDIT TESTIMONIAL TEXT HERE */}
                     <p className="text-slate-700 text-lg leading-relaxed flex-1 mb-8 relative z-10">
-                        "The instant responses are game-changing. I was able to iterate on my portfolio 10x faster."
+                        "The instant responses and verification vectors saved me dozens of hours of blind research."
                     </p>
-                    {/* END EDIT TESTIMONIAL TEXT HERE */}
                     <div className="flex items-center gap-4 mt-auto relative z-10">
                         <div className="w-12 h-12 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-slate-400">
-                            <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
-                        </div>
-                        <div>
-                            {/* EDIT NAME HERE */}
-                            <div className="font-bold text-primary">Y.Y.</div>
-                            {/* END EDIT NAME HERE */}
-                            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">University '28</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Testimonial 3 */}
-                <div className="bg-white/90 border border-slate-200 rounded-3xl p-8 flex flex-col transition duration-300 ease-out shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-2 hover:rotate-1 cursor-default group relative overflow-hidden fade-up stagger-3">
-                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <svg className="w-12 h-12 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                    </div>
-                    <div className="flex text-amber-400 gap-1 mb-6 relative z-10">
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    </div>
-                    {/* EDIT TESTIMONIAL TEXT HERE */}
-                    <p className="text-slate-700 text-lg leading-relaxed flex-1 mb-8 relative z-10">
-                        "I didn't know where to start. The smart advisory system mapped out a plan that actually worked."
-                    </p>
-                    {/* END EDIT TESTIMONIAL TEXT HERE */}
-                    <div className="flex items-center gap-4 mt-auto relative z-10">
-                        <div className="w-12 h-12 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-slate-400">
-                            <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
-                        </div>
-                        <div>
-                            {/* EDIT NAME HERE */}
-                            <div className="font-bold text-primary">Y.Y.</div>
-                            {/* END EDIT NAME HERE */}
-                            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">University '28</div>
+                            <svg className="w-6 h-6" xmlns="http://www.w3.org/205"/>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        {/* Pricing Section */}
-        <section id="pricing" className="relative z-10 w-full max-w-7xl mx-auto px-4 py-24 border-t border-slate-200/50">
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="pricing-bg-shape bg-primary" />
-                <div className="pricing-bg-shape pricing-bg-shape-secondary bg-amber-400" />
-            </div>
-            <div className="text-center mb-16 fade-up">
-                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">Pricing</span>
-                <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary mb-4 tracking-tight">Choose Your Plan</h2>
-                <p className="text-slate-600 max-w-xl mx-auto text-lg">Invest in your future with our flexible options.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                {pricingPlans.map((plan, index) => (
-                    <div
-                        key={plan.title}
-                        className={`pricing-card pricing-card-swipe ${plan.featured ? 'pricing-card-featured bg-primary rounded-3xl shadow-xl shadow-primary/20 border border-primary overflow-hidden relative' : 'bg-white rounded-3xl border border-slate-200 shadow-sm'} fade-up ${staggerClasses[index]} transition duration-300 ease-out hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-2 hover:rotate-1 flex flex-col p-8`}
-                    >
-                        {plan.badge ? (
-                            <div className="absolute top-0 right-0 bg-amber-400 text-amber-950 text-xs font-bold uppercase tracking-widest py-1 px-4 rounded-bl-xl">
-                                {plan.badge}
-                            </div>
-                        ) : null}
-                        <h3 className={`text-xl font-bold mb-2 ${plan.featured ? 'text-white' : 'text-primary'}`}>{plan.title}</h3>
-                        <div className="flex items-baseline gap-1 mb-6">
-                            <span className={`text-4xl font-bold ${plan.featured ? 'text-white' : 'text-primary'}`}>{plan.price}</span>
-                            <span className={`${plan.featured ? 'text-slate-300' : 'text-slate-500'} font-medium`}>{plan.suffix}</span>
-                        </div>
-                        <ul className={`space-y-4 mb-8 flex-1 ${plan.featured ? 'text-slate-300' : 'text-slate-600'}`}>
-                            {plan.features.map((feature) => (
-                                <li key={feature} className="flex items-center gap-3">
-                                    <svg className={`w-5 h-5 ${plan.featured ? 'text-amber-400' : 'text-amber-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                                    {feature}
-                                </li>
-                            ))}
-                        </ul>
-                        <button
-                            onClick={navigateToDashboard}
-                            className={`${plan.featured ? 'w-full py-3 rounded-full bg-amber-400 text-amber-950 hover:bg-amber-300' : 'w-full py-3 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50'} font-bold uppercase tracking-wider transition-colors text-sm`}
-                        >
-                            {plan.buttonLabel}
-                        </button>
-                    </div>
-                ))}
-            </div>
-        </section>
-
-        {/* FAQs Section */}
-        <section id="faqs" className="relative z-10 w-full max-w-4xl mx-auto px-4 py-24">
-            <div className="text-center mb-16 fade-up">
-                <span className="text-primary font-bold tracking-widest uppercase text-xs mb-3 block">Got Questions?</span>
-                <h2 className="text-4xl md:text-5xl font-serif font-medium text-primary mb-4 tracking-tight">Frequently Asked Questions</h2>
-            </div>
-            
-            <div className="space-y-4">
-                {faqItems.map((faq, index) => (
-                    <details key={faq.question} className={`bg-white rounded-3xl border border-slate-200 shadow-sm transition duration-200 ease-out hover:border-slate-300 fade-up ${staggerClasses[index]} overflow-hidden group`}>
-                        <summary className="w-full flex items-center justify-between p-6 text-left font-semibold text-lg text-primary outline-none cursor-pointer">
-                            <span>{faq.question}</span>
-                            <span className="bg-slate-100 p-2 rounded-full text-slate-500 flex-shrink-0 ml-4 group-open:bg-slate-200">
-                                <svg className="w-5 h-5 faq-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </summary>
-                        <div className="faq-answer p-6 pt-0 text-slate-600 leading-relaxed pr-8 border-t border-slate-100">
-                            {faq.answer}
-                        </div>
-                    </details>
-                ))}
-            </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="relative z-10 w-full border-t border-slate-200 bg-white/50 mt-12 py-12">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-                        <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a2 2 0 0 0-.019-3.838L12.83 4.32a2 2 0 0 0-1.66 0L2.6 7.08a2 2 0 0 0 0 3.832l8.57 3.698a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
-                    </div>
-                    <span className="font-serif font-bold text-lg text-primary uppercase tracking-tight">EC Match</span>
-                </div>
-                <div className="text-slate-500 text-sm">
-                    &copy; 2026 EC Match. All rights reserved.
-                </div>
-                <div className="flex gap-6 text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                    <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-                    <a href="#" className="hover:text-primary transition-colors">Terms</a>
-                </div>
-            </div>
-        </footer>
     </div>
 
-    {/* Intersection Observer for Scroll Animations */}
-    
+    {/* --- Developer Password Prompt Modal --- */}
+    {showDevPasswordPrompt && (
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold font-serif text-primary">Developer Access</h3>
+            <p className="text-sm text-slate-500 mt-1">Please type the gatekeeper passcode to initialize login.</p>
+          </div>
+          
+          <form onSubmit={handleDevPasswordSubmit} className="space-y-4">
+            <div>
+              <input 
+                type="password" 
+                value={devPasswordInput} 
+                onChange={(e) => setDevPasswordInput(e.target.value)} 
+                placeholder="Enter passcode"
+                className="w-full px-4 h-12 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm font-medium"
+                autoFocus
+                required
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button 
+                type="button" 
+                onClick={() => { setShowDevPasswordPrompt(false); setDevPasswordInput(''); }}
+                className="flex-1 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs uppercase tracking-wider transition"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="flex-1 h-11 rounded-xl bg-primary text-white font-semibold text-xs uppercase tracking-wider hover:bg-primary/90 transition shadow-md shadow-primary/10"
+              >
+                Verify & Proceed
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
 
     </div>
   );
